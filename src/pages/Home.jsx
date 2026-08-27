@@ -32,10 +32,24 @@ function Home() {
     //     { id: 3, title: 'Die Hard Fan', description: 'Description of Movie 3' , release_date: '2020'},
     // ];
 
-const handleSearch = (event) => {
+const handleSearch = async(event) => {
     event.preventDefault();
-    const searchTerm = event.target.elements.search.value;
-    setSearchQuery(searchQuery);
+    if(!searchQuery.trim()) {
+        return;
+    }
+    if(loading) return; // Prevent multiple searches while loading
+    
+    setloading(true);
+    try{
+        const searchResults = await searchMovies(searchQuery);
+        setMovies(searchResults);
+        setError(null); // Clear any previous errors
+    } catch (error) {
+        console.error("Error searching movies:", error);
+        setError("Failed to search movies. Please try again later.");
+    } finally {
+        setLoading(false);
+    }
     console.log(`Searching for: ${searchTerm}`);
     // Implement the search logic here
   };
@@ -49,7 +63,8 @@ return (
             <button type="submit">Search</button>
         </form>
 
-        
+        {error && <div className="error-message">{error}</div>}
+       
         {loading ? (
             <p>Loading movies...</p>
         ) : (
