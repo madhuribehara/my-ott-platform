@@ -1,10 +1,19 @@
 import '../css/ShowCard.css';
+import {useMovieContext} from '../contexts/MovieContex'; 
 
 function ShowCard({ movie }) {
-    function handleFavorite() {
-        // Implement the logic for the "Favorite" button click
-        console.log(`Favorited ${movie.title}`);
+    const {isFavourite, addToFavourites, removeFromFavourites } = useMovieContext();
+    const favourite = isFavourite(movie.id);
+    
+    function handleFavorite(e) {
+        e.preventDefault();
+        if (favourite) {
+            removeFromFavourites(movie.id);
+        } else {
+            addToFavourites(movie);
+        }
     }
+    
     function handleWatchNow() {
         // Implement the logic for the "Watch Now" button click
         console.log(`Watching ${movie.title}`);
@@ -28,9 +37,10 @@ function ShowCard({ movie }) {
   return (
     <div className="show-card">
         <div className="show-card-content">
-            <img clasName="show-card-image" src={`https://image.tmdb.org/t/p/w500${movie.poster_path}`} alt={movie.title}/>
+            <img className="show-card-image" src={`https://image.tmdb.org/t/p/w500${movie.poster_path}`} alt={movie.title}/>
             <div className="show-card-details"> 
-                <button className="favorite-button" onClick={handleFavorite}>❤️</button>
+                <button className= {`favorite-btn${favourite ? " active" : ""}`} onClick={handleFavorite}>♡</button>
+                {/* {favourite ? "favorite-button active" : "favorite-button"} */}
             </div>
         </div>
         <div className="show-card-info">
